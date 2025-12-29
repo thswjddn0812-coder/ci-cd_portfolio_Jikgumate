@@ -56,6 +56,9 @@ export class Users {
   @Column("varchar", { name: "hashed_rt", nullable: true, length: 255 })
   hashedRt: string | null;
 
+  @Column("varchar", { name: "profile_image_url", nullable: true, length: 500 })
+  profileImageUrl: string | null;
+
   @OneToMany(() => Orders, (orders) => orders.user)
   orders: Orders[];
 

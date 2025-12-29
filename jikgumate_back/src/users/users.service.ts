@@ -30,4 +30,25 @@ export class UsersService {
   ): Promise<void> {
     await this.usersRepository.update(userId, { hashedRt });
   }
+
+  async uploadProfileImage(userId: number, file: Express.Multer.File) {
+    const fileName = `${userId}_${Date.now()}_${file.originalname}`;
+    const { supabase } = require('../../../supabase');
+    const { data, error } = await supabase.storage
+      .from('photo')
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true,
+      });
+    if (error) {
+      console.error('Supabase upload error:', error);
+      throw new Error('이미지 업로드에 실패했습니다.');
+    }
+    const { data: publicUrlData } = supabase.storage
+      .from('photo')
+      .getPublicUrl(fileName);
+    const publicUrl = publicUrlData.publicUrl;
+    await this.usersRepository.update(userId, { profileImageUrl: publicUrl });
+    return { profileImageUrl: publicUrl };
+  }
 }

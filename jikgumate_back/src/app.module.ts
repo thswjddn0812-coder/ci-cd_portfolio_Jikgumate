@@ -9,21 +9,31 @@ import { OrderItemsModule } from './order-items/order-items.module';
 import { ShippingInfoModule } from './shipping-info/shipping-info.module';
 import { RefreshTokensModule } from './refresh-tokens/refresh-tokens.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'gateway01.ap-northeast-1.prod.aws.tidbcloud.com',
-      port: 4000,
-      username: '14f9gVFKUUeCkMd.root',
-      password: 'MkoGnJrMTAgtLn0R',
-      database: 'JikguMate',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false, // 주의: 개발 환경에서만 true (테이블 자동 생성)
-      ssl: {
-        rejectUnauthorized: true, // TiDB 보안 연결 필수
-      },
+    ConfigModule.forRoot({
+      isGlobal: true, // 이게 있어야 다른 모듈에서 환경변수를 읽을 수 있습니다!
+      envFilePath: '.env', // 프로젝트 루트에 있는 .env 파일을 명시적으로 지정
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: false,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }),
     }),
     UsersModule,
     OrdersModule,

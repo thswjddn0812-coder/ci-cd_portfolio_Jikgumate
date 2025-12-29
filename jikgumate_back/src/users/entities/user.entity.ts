@@ -9,7 +9,7 @@ import { Orders } from '../../orders/entities/order.entity';
 import { RefreshTokens } from '../../refresh-tokens/entities/refresh-token.entity';
 
 @Index('email', ['email'], { unique: true })
-@Entity('Users')
+@Entity('Users', { schema: 'JikguMate' })
 export class Users {
   @PrimaryGeneratedColumn({ type: 'int', name: 'user_id' })
   userId: number;
@@ -22,7 +22,7 @@ export class Users {
     nullable: true,
     comment: '0: 일반유저, 1: 관리자',
     width: 1,
-    default: 0,
+    default: () => "'0'",
   })
   isAdmin: boolean | null;
 
@@ -55,6 +55,9 @@ export class Users {
 
   @Column('varchar', { name: 'hashed_rt', nullable: true, length: 255 })
   hashedRt: string | null;
+
+  @Column('varchar', { name: 'profile_image_url', nullable: true, length: 500 })
+  profileImageUrl: string | null;
 
   @OneToMany(() => Orders, (orders) => orders.user)
   orders: Orders[];
