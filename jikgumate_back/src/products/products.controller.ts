@@ -7,17 +7,24 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AdminGuardGuard } from 'src/common/guard/admin-guard.guard';
-@UseGuards(AdminGuardGuard)
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'), AdminGuardGuard)
 @ApiTags('Products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
+
+  @Get('analyze')
+  async analyzeProduct(@Query('url') url: string) {
+    return await this.productsService.getProductInfo(url);
+  }
 
   @Post()
   @ApiOperation({

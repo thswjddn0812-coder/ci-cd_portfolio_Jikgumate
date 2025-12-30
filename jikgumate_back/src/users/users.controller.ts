@@ -33,17 +33,17 @@ export class UsersController {
   }
 
   @UseGuards(AdminGuardGuard)
-  @Get(':id')
+  @Get(':email')
   @ApiOperation({
     summary: '사용자 조회',
-    description: '특정 사용자의 정보를 조회합니다.',
+    description: '이메일로 사용자의 정보를 조회합니다.',
   })
   @ApiResponse({
     status: 200,
     description: '사용자 조회 성공',
     type: CreateUserDto,
   })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  findOne(@Param('email') email: string) {
+    return this.usersService.findOneByEmail(email);
   }
 }

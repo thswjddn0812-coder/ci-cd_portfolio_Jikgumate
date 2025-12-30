@@ -13,7 +13,8 @@ import { CreateShippingInfoDto } from './dto/create-shipping-info.dto';
 import { UpdateShippingInfoDto } from './dto/update-shipping-info.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AdminGuardGuard } from 'src/common/guard/admin-guard.guard';
-@UseGuards(AdminGuardGuard)
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'), AdminGuardGuard)
 @ApiTags('ShippingInfo')
 @Controller('shipping-info')
 export class ShippingInfoController {

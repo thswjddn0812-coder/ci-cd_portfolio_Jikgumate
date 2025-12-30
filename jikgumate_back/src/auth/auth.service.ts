@@ -23,7 +23,11 @@ export class AuthService {
       ...createUserDto,
       password: hash,
     });
-    const tokens = await this.getTokens(newUser.userId, newUser.email);
+    const tokens = await this.getTokens(
+      newUser.userId,
+      newUser.email,
+      newUser.isAdmin ?? false,
+    );
     await this.updateRefreshTokens(newUser.userId, tokens.refreshToken);
     return tokens;
   }
@@ -38,7 +42,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const tokens = await this.getTokens(user.userId, user.email);
+    const tokens = await this.getTokens(user.userId, user.email, user.isAdmin);
     await this.updateRefreshTokens(user.userId, tokens.refreshToken);
     return tokens;
   }
@@ -59,7 +63,11 @@ export class AuthService {
     if (!rtStored)
       throw new ForbiddenException('Access Denied: Token not found in DB');
 
-    const tokens = await this.getTokens(user.userId, user.email);
+    const tokens = await this.getTokens(
+      user.userId,
+      user.email,
+      user.isAdmin ?? false,
+    );
     await this.updateRefreshTokens(user.userId, tokens.refreshToken);
     return tokens;
   }
@@ -71,14 +79,14 @@ export class AuthService {
     await this.refreshTokensService.create(userId, rt);
   }
 
-  async getTokens(userId: number, email: string) {
+  async getTokens(userId: number, email: string, isAdmin: boolean) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
-        { sub: userId, email },
+        { sub: userId, email, is_admin: isAdmin },
         { secret: 'at-secret', expiresIn: '15m' }, // TODO: Env
       ),
       this.jwtService.signAsync(
-        { sub: userId, email },
+        { sub: userId, email, is_admin: isAdmin },
         { secret: 'rt-secret', expiresIn: '7d' }, // TODO: Env
       ),
     ]);
