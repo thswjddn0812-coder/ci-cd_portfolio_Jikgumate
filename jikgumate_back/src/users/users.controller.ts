@@ -32,7 +32,20 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @UseGuards(AdminGuardGuard)
+  @Patch(':email')
+  @ApiOperation({
+    summary: '사용자 정보 수정',
+    description: '이메일로 사용자의 정보를 수정합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '사용자 정보 수정 성공',
+    type: UpdateUserDto,
+  })
+  update(@Param('email') email: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(email, updateUserDto);
+  }
+
   @Get(':email')
   @ApiOperation({
     summary: '사용자 조회',

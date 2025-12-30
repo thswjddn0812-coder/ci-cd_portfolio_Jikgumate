@@ -83,11 +83,11 @@ export class AuthService {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         { sub: userId, email, is_admin: isAdmin },
-        { secret: 'at-secret', expiresIn: '15m' }, // TODO: Env
+        { secret: 'at-secret', expiresIn: '1m' }, // TODO: Env
       ),
       this.jwtService.signAsync(
         { sub: userId, email, is_admin: isAdmin },
-        { secret: 'rt-secret', expiresIn: '7d' }, // TODO: Env
+        { secret: 'rt-secret', expiresIn: '3m' }, // TODO: Env
       ),
     ]);
 

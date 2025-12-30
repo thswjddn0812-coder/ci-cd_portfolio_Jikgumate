@@ -48,4 +48,13 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   pcccNumber?: string;
+
+  @ApiProperty({
+    description: '프로필 이미지 URL',
+    example: 'https://example.com/profile.jpg',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  profileImageUrl?: string;
 }
