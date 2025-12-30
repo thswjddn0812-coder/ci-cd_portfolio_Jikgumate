@@ -3,7 +3,6 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import puppeteer from 'puppeteer'; // 추가 설치 필요
 @Injectable()
 export class ProductsService {
   async getProductInfo(url: string) {
